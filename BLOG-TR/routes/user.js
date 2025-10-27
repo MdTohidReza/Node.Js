@@ -32,13 +32,11 @@ router.get('/logout',(req,res)=>{
 router.post("/signup", async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
-
     await User.create({
       fullName,
       email,
       password,
     });
-
     return res.redirect("/");
   } catch (error) {
     console.error("Signup error:", error.message);
