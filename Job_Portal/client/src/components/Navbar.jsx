@@ -1,6 +1,6 @@
 import React from 'react';
 import {assets} from '../assets/assets.js';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { useClerk,UserButton,useUser } from '@clerk/clerk-react';
 
 
@@ -9,12 +9,13 @@ const Navbar =()=>{
     
     const {openSignIn} = useClerk();
     const {user} = useUser();
+    const navigate = useNavigate();
 
 
     return (
     <div className='shadow py-4'>
         <div className='container px-4 2xl:px-20 mx-auto flex justify-between item-center'>
-            <img src={assets.logo} alt="" />
+            <img onClick={()=>navigate('/')} className='cursor-pointer' src={assets.logo} alt="" />
             {
                 user
                 ?<div className='flex items-center gap-3'>

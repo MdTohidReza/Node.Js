@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 const JobCard = ({ job }) => {
     const navigate = useNavigate();
   return (
-    <div className='border border-gray-200 p-6 shadow-2xl rounded '>
+    <div className='border border-gray-200 p-6 rounded '>
         <div className='flex justify-between items-center'>
             <img className='h-8' src={assets.company_icon} alt="" />
         </div>
