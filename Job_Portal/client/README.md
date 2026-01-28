@@ -1,16 +1,105 @@
-# React + Vite
+# Job Portal - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern job portal application built with React and Vite, featuring a responsive UI for job seekers and recruiters.
 
-Currently, two official plugins are available:
+## 📋 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Job Listings**: Browse and search available job positions
+- **Job Applications**: Apply for jobs with a simple interface
+- **User Dashboard**: Track your job applications
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+- **Modern UI Components**: Includes navigation, hero section, job cards, and footer
+- **Authentication**: Recruiter login functionality
 
-## React Compiler
+## 🛠️ Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 18** - JavaScript library for building user interfaces
+- **Vite** - Next generation frontend build tool
+- **CSS3** - Styling and responsive layouts
+- **Context API** - State management
 
-## Expanding the ESLint configuration
+## 📁 Project Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+src/
+├── components/          # Reusable React components
+│   ├── AppDownload.jsx
+│   ├── Footer.jsx
+│   ├── Hero.jsx
+│   ├── JobCard.jsx
+│   ├── JobListing.jsx
+│   ├── Loading.jsx
+│   ├── Navbar.jsx
+│   └── RecruiterLogin.jsx
+├── pages/              # Page components
+│   ├── Applications.jsx
+│   ├── Applyjob.jsx
+│   └── Home.jsx
+├── context/            # Context for state management
+│   └── AppContext.jsx
+├── assets/             # Static assets
+│   └── assets.js
+├── App.jsx
+├── main.jsx
+├── App.css
+└── index.css
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v14 or higher)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+2. Navigate to the client directory:
+   ```bash
+   cd client
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+### Development
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:5173`
+
+### Build
+
+Build for production:
+
+```bash
+npm run build
+```
+
+### Preview
+
+Preview the production build:
+
+```bash
+npm run preview
+```
+
+## 📦 Dependencies
+
+- React - UI library
+- Vite - Build tool
+- ESLint - Code quality tool
+
+## 🤝 Contributing
+
+Feel free to submit issues and enhancement requests!
+
+## 📄 License
+
+This project is open source and available under the MIT License.
