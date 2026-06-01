@@ -44,9 +44,18 @@ export const register = async(req,res)=>{
             from:process.env.SENDER_EMAIL,
             to:email,
             subject:'Welcome to our App',
-            text:`Hi ${name},\n\nWelcome to our app! We're glad to have you on board.\n\nBest Regards,\nThe Team`
+            text:`Hi ${name},\n\nWelcome to our app! We're glad to have you on board.\n\nBest Regards,\nThe Team ${email}`
         }
         await transporter.sendMail(mailOptions)
+
+        // try {
+        //     const info = await transporter.sendMail(mailOptions);
+        //     console.log(" Email sent:", info.messageId);
+        //     console.log(" Response:", info.response);
+        // } catch (error) {
+        //     console.error(" Email error:", error.message);
+        //     console.error(" Full error:", error);
+        // }
 
         return res.json({success:true, Message:'Successfully Register'})
 
@@ -102,6 +111,61 @@ export const logout = (req,res)=>{
     } catch (error) {
         res.json({success:false, Message: error.message})
     }
+}
+
+ export const sendVerifyEmail = async(req,res)=>{
+    try {
+        const {userId} = req.body;
+        const user = await userModel.findById(userId)
+        if(user.isAccountVerified){
+            return res.json({success:false, message:"Account is already verified"})
+        }
+        const otp = ( Math.floor(100000 +  Math.random() * 900000)).toString()
+        user.verifyOtp = otp;
+        user.verifyOtpExpire = Date.now() + 24*60*60*1000; //24 hours expiry
+        await user.save()
+        const mailOptions = {
+            from: process.env.SENDER_EMAIL,
+            to: email,
+            subject: "Account Verification OTP",
+            text: `Hi ${name},\n\nYour verification OTP is: ${otp}\n\nBest Regards,\nThe Team ${email}`,
+        };
+            await transporter.sendMail(mailOptions);
+
+    } catch (error) {
+        return res.json({success:false, Message:error.message})
+    }
+}
+
+//verify otp controller
+    export const verifyOtp = async(req,res)=>{
+    const {userId, otp} = req.body;
+    if(!userId || !otp){
+        return res.json({sucess:false , message:'Missing userId or otp' })
+    }
+    try {
+        const user = await userModel.findById(userId)
+        if(!user){
+            return res.json({success:false, message:'User not found'})
+        }
+        if(user.isAccountVerified){
+            return res.json({success:false, message:'Account is already verified'})
+        }
+        if(user.verifyOtp === '' || user.verifyOtp !== otp){
+            return res.json({success:false, message:'Invalid OTP'})
+        }
+        if(user.verifyExpireAt < Date.now()){
+            return res.json({sucess:false, message:'Otp Expired'})
+        }
+        user.isAccountVerified = true;
+        user.verifyOtp = '';
+        user.verifyOtpExpire = 0;
+        await user.save()
+        return res.json({success:true, message:'Account Verified Successfully'})
+    } catch (error) {
+        return res.json({ success: false, Message: error.message });
+    }
+
 }
 
 
