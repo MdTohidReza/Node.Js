@@ -42,9 +42,9 @@ export const register = async(req,res)=>{
         //Welcoming Email to the user
         const mailOptions = {
             from:process.env.SENDER_EMAIL,
-            to:email,
+            to:user.email,
             subject:'Welcome to our App',
-            text:`Hi ${name},\n\nWelcome to our app! We're glad to have you on board.\n\nBest Regards,\nThe Team ${email}`
+            text:`Hi ${user.name},\n\nWelcome to our app! We're glad to have you on board.\n\nBest Regards,\nThe Team ${user.email}`
         }
         await transporter.sendMail(mailOptions)
 
@@ -126,11 +126,15 @@ export const logout = (req,res)=>{
         await user.save()
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
-            to: email,
+            to: user.email,
             subject: "Account Verification OTP",
-            text: `Hi ${name},\n\nYour verification OTP is: ${otp}\n\nBest Regards,\nThe Team ${email}`,
+            text: `Hi ${user.name},\n\nYour verification OTP is: ${otp}\n\nBest Regards,\nThe Team ${user.email}`,
         };
             await transporter.sendMail(mailOptions);
+            return res.json({
+              success: true,
+              message: "Verification email sent",
+            });
 
     } catch (error) {
         return res.json({success:false, Message:error.message})
@@ -141,7 +145,7 @@ export const logout = (req,res)=>{
     export const verifyOtp = async(req,res)=>{
     const {userId, otp} = req.body;
     if(!userId || !otp){
-        return res.json({sucess:false , message:'Missing userId or otp' })
+        return res.json({success:false , message:'Missing userId or otp' })
     }
     try {
         const user = await userModel.findById(userId)
@@ -154,8 +158,8 @@ export const logout = (req,res)=>{
         if(user.verifyOtp === '' || user.verifyOtp !== otp){
             return res.json({success:false, message:'Invalid OTP'})
         }
-        if(user.verifyExpireAt < Date.now()){
-            return res.json({sucess:false, message:'Otp Expired'})
+        if(user.verifyOtpExpire < Date.now()){
+            return res.json({success:false, message:'Otp Expired'})
         }
         user.isAccountVerified = true;
         user.verifyOtp = '';
@@ -166,6 +170,5 @@ export const logout = (req,res)=>{
         return res.json({ success: false, Message: error.message });
     }
 
-}
-
+    }
 
