@@ -1,4 +1,4 @@
-import cookieparser from 'cookie-parser'
+import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import 'dotenv/config'
 import express from 'express'
@@ -11,7 +11,7 @@ connectDB();
 
 
 app.use(express.json());
-app.use(cookieparser());
+app.use(cookieParser());
 app.use(cors({credentials:true}))
 
 //API Endpoints

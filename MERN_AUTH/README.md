@@ -1,115 +1,123 @@
 # MERN Authentication App
 
-A full-stack MERN (MongoDB, Express.js, React, Node.js) application for user authentication, including registration, login, and secure token-based authentication.
+A backend-focused MERN authentication service built with Node.js, Express, MongoDB, and JWT. It supports user registration, login, email verification, password reset, and token-based session handling.
 
 ## Features
 
 - User registration and login
 - Password hashing with bcryptjs
-- JWT (JSON Web Token) authentication
-- Email verification using nodemailer
-- Cookie-based session management
-- CORS enabled for cross-origin requests
-- MongoDB database integration
+- JWT authentication with cookie storage
+- Email verification via OTP
+- Password reset via OTP email
+- MongoDB integration with Mongoose
+- CORS support for frontend communication
 
 ## Tech Stack
 
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB with Mongoose
 - **Authentication**: JWT, bcryptjs
-- **Email**: Nodemailer
-- **Other**: CORS, cookie-parser, dotenv
+- **Email**: nodemailer
+- **Middleware**: cookie-parser, cors, dotenv
 
 ## Project Structure
 
 ```
 MERN_AUTH/
-├── client/          # React frontend (not implemented yet)
+├── client/                  # React frontend placeholder (not implemented)
 ├── server/
 │   ├── config/
-│   │   └── mongodb.js  # MongoDB connection configuration
-│   ├── package.json    # Server dependencies and scripts
-│   └── server.js       # Main server file
-└── README.md           # Project documentation
+│   │   ├── mongodb.js      # MongoDB connection configuration
+│   │   └── nodeMailer.js   # Nodemailer SMTP transporter
+│   ├── Controllers/
+│   │   └── authController.js
+│   ├── middleware/
+│   │   └── userAuth.js
+│   ├── models/
+│   │   └── userModel.js
+│   ├── routes/
+│   │   └── authRoutes.js
+│   ├── package.json        # Server dependencies and scripts
+│   └── server.js           # Main Express server
+└── README.md               # Project documentation
 ```
 
 ## Installation
 
 1. Clone the repository:
 
-   ```
+   ```bash
    git clone <repository-url>
    cd MERN_AUTH
    ```
 
 2. Install server dependencies:
 
-   ```
+   ```bash
    cd server
    npm install
    ```
 
-3. Set up environment variables:
-   Create a `.env` file in the `server` directory with the following variables:
+3. Create a `.env` file in the `server` directory with these variables:
 
-   ```
+   ```env
    MONGODB_URI=your_mongodb_connection_string
    PORT=4000
    JWT_SECRET=your_jwt_secret_key
-   EMAIL_USER=your_email@example.com
-   EMAIL_PASS=your_email_password
+   SENDER_EMAIL=your_sender_email@example.com
+   SMTP_USER=your_smtp_username
+   SMTP_PASS=your_smtp_password
    ```
 
-4. Start the MongoDB server (ensure MongoDB is installed and running).
+4. Start MongoDB locally or connect to a hosted MongoDB cluster.
 
 ## Usage
 
-1. Start the server:
+1. Start the backend server:
 
-   ```
+   ```bash
    cd server
-   npm run server  # Uses nodemon for development
+   npm run server
    ```
 
-   Or for production:
+   For production mode:
 
-   ```
+   ```bash
    npm start
    ```
 
-2. The server will run on `http://localhost:4000` (or the port specified in `.env`).
-
-3. API endpoints:
-   - `GET /`: Check if API is running
-
-   (Additional endpoints for authentication will be added as the project develops.)
-
-## Frontend Setup
-
-The React frontend in the `client` directory is not implemented yet. To set up the client:
-
-1. Navigate to the client directory:
+2. Default server address:
 
    ```
-   cd client
+   http://localhost:4000
    ```
 
-2. Initialize a React app (if not already done):
+## API Endpoints
 
-   ```
-   npx create-react-app .
-   ```
+All authentication routes are mounted under `/api/auth`.
 
-3. Install necessary dependencies (e.g., axios for API calls).
+- `GET /` - Health check endpoint
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login with email and password
+- `POST /api/auth/logout` - Logout and clear auth cookie
+- `POST /api/auth/send-verify-otp` - Send account verification OTP (requires auth)
+- `POST /api/auth/verify-account` - Verify account with OTP (requires auth)
+- `POST /api/auth/is-authenticated` - Check auth status (requires auth)
+- `POST /api/auth/send-reset-otp` - Send password reset OTP
+- `POST /api/auth/reset-password` - Reset password using OTP
 
-4. Implement authentication components and connect to the backend API.
+## Notes
+
+- The `client/` directory currently serves as a placeholder for a future React frontend.
+- The backend uses cookies to store the JWT token and requires a valid `JWT_SECRET`.
+- Email delivery is configured through SMTP with `nodemailer`.
 
 ## Contributing
 
 1. Fork the repository.
-2. Create a feature branch.
-3. Make your changes.
-4. Submit a pull request.
+2. Create a new branch: `git checkout -b feature/my-feature`
+3. Make your changes and commit them.
+4. Push to your branch and open a pull request.
 
 ## License
 
