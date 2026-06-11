@@ -1,46 +1,84 @@
 # MERN Authentication App
 
-A backend-focused MERN authentication service built with Node.js, Express, MongoDB, and JWT. It supports user registration, login, email verification, password reset, and token-based session handling.
+A backend-focused MERN authentication service built with Node.js, Express, MongoDB, and JWT. The app provides secure user onboarding, login, email verification, password reset, and protected user data access.
 
-## Features
+## What this app does
 
-- User registration and login
-- Password hashing with bcryptjs
-- JWT authentication with cookie storage
-- Email verification via OTP
-- Password reset via OTP email
-- MongoDB integration with Mongoose
-- CORS support for frontend communication
-
-## Tech Stack
-
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB with Mongoose
-- **Authentication**: JWT, bcryptjs
-- **Email**: nodemailer
-- **Middleware**: cookie-parser, cors, dotenv
+- Registers users with hashed passwords.
+- Logs users in and stores a JWT token in an HTTP-only cookie.
+- Verifies user accounts by sending a one-time OTP email.
+- Sends password reset OTP emails and updates the password securely.
+- Protects routes using JWT cookie-based authentication.
+- Exposes a small authenticated user profile endpoint.
 
 ## Project Structure
 
 ```
 MERN_AUTH/
-├── client/                  # React frontend placeholder (not implemented)
-├── server/
+├── client/                         # Placeholder for future React frontend
+├── server/                         # Backend server application
 │   ├── config/
-│   │   ├── mongodb.js      # MongoDB connection configuration
-│   │   └── nodeMailer.js   # Nodemailer SMTP transporter
+│   │   ├── mongodb.js              # MongoDB connection logic, connects to the `mern-auth` database
+│   │   └── nodeMailer.js           # Nodemailer SMTP transporter configuration
 │   ├── Controllers/
-│   │   └── authController.js
+│   │   ├── authController.js       # Registration, login, logout, OTP, verification, reset password flows
+│   │   └── userController.js       # Fetch authenticated user profile data
 │   ├── middleware/
-│   │   └── userAuth.js
+│   │   └── userAuth.js             # Validates JWT cookie and attaches `userId` to requests
 │   ├── models/
-│   │   └── userModel.js
+│   │   └── userModel.js            # Mongoose schema for users, OTPs, and verification state
+   │
 │   ├── routes/
-│   │   └── authRoutes.js
-│   ├── package.json        # Server dependencies and scripts
-│   └── server.js           # Main Express server
-└── README.md               # Project documentation
+│   │   ├── authRoutes.js           # `/api/auth` routes for auth-related actions
+│   │   └── userRoute.js            # `/api/user` route for protected user data
+│   ├── package.json                # Server dependencies and run scripts
+│   └── server.js                   # Express app setup, middleware, and route registration
+└── README.md                       # Project documentation
 ```
+
+## File and Folder Details
+
+- `server/server.js`
+  - Starts Express on the configured port.
+  - Connects to MongoDB.
+  - Enables JSON parsing, cookies, and CORS.
+  - Registers `/api/auth` and `/api/user` routes.
+
+- `server/config/mongodb.js`
+  - Connects to MongoDB using `process.env.MONGODB_URI`.
+  - Prints a success message when the database connects.
+
+- `server/config/nodeMailer.js`
+  - Creates a Nodemailer transporter for SMTP email delivery.
+  - Uses `SMTP_USER` and `SMTP_PASS` from environment variables.
+
+- `server/models/userModel.js`
+  - Defines the user schema.
+  - Stores hashed passwords, OTP values, verification status, and expiry data.
+
+- `server/middleware/userAuth.js`
+  - Reads the `token` cookie.
+  - Verifies the JWT with `JWT_SECRET`.
+  - Adds `userId` to `req.body` for protected routes.
+
+- `server/Controllers/authController.js`
+  - `register`: creates a user, hashes password, issues JWT cookie, sends welcome email.
+  - `login`: verifies credentials, issues JWT cookie.
+  - `logout`: clears the auth cookie.
+  - `sendVerifyEmail`: generates and emails account verification OTP.
+  - `verifyOtp`: validates OTP and marks the account verified.
+  - `isAuthenticated`: returns success for authenticated requests.
+  - `sendResetOtp`: sends password reset OTP to the user email.
+  - `resetPassword`: verifies OTP and updates the password.
+
+- `server/Controllers/userController.js`
+  - `getUserData`: returns the authenticated user's name and verification status.
+
+- `server/routes/authRoutes.js`
+  - Mounts auth API routes and applies `userAuth` where needed.
+
+- `server/routes/userRoute.js`
+  - Exposes a protected `/api/user/data` endpoint.
 
 ## Installation
 
@@ -58,7 +96,7 @@ MERN_AUTH/
    npm install
    ```
 
-3. Create a `.env` file in the `server` directory with these variables:
+3. Create a `.env` file in `server/` with:
 
    ```env
    MONGODB_URI=your_mongodb_connection_string
@@ -69,56 +107,74 @@ MERN_AUTH/
    SMTP_PASS=your_smtp_password
    ```
 
-4. Start MongoDB locally or connect to a hosted MongoDB cluster.
+4. Run MongoDB locally or connect to a cloud MongoDB instance.
 
-## Usage
+## Run the app
 
-1. Start the backend server:
+Start the backend in development mode:
 
-   ```bash
-   cd server
-   npm run server
-   ```
+```bash
+cd server
+npm run server
+```
 
-   For production mode:
+Production mode:
 
-   ```bash
-   npm start
-   ```
+```bash
+npm start
+```
 
-2. Default server address:
+Server URL:
 
-   ```
-   http://localhost:4000
-   ```
+```text
+http://localhost:4000
+```
 
 ## API Endpoints
 
-All authentication routes are mounted under `/api/auth`.
+### Health
 
-- `GET /` - Health check endpoint
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - Login with email and password
-- `POST /api/auth/logout` - Logout and clear auth cookie
-- `POST /api/auth/send-verify-otp` - Send account verification OTP (requires auth)
-- `POST /api/auth/verify-account` - Verify account with OTP (requires auth)
-- `POST /api/auth/is-authenticated` - Check auth status (requires auth)
-- `POST /api/auth/send-reset-otp` - Send password reset OTP
-- `POST /api/auth/reset-password` - Reset password using OTP
+- `GET /` – Returns a simple "API is Running" response.
+
+### Authentication
+
+- `POST /api/auth/register` – Register a new user.
+- `POST /api/auth/login` – Login with email and password.
+- `POST /api/auth/logout` – Logout and clear auth cookie.
+
+### Account verification
+
+- `POST /api/auth/send-verify-otp` – Send verification OTP to the logged-in user.
+- `POST /api/auth/verify-account` – Verify account with OTP.
+- `POST /api/auth/is-authenticated` – Check whether the current JWT cookie is valid.
+
+### Password reset
+
+- `POST /api/auth/send-reset-otp` – Send a password reset OTP to email.
+- `POST /api/auth/reset-password` – Change password using the reset OTP.
+
+### Protected user data
+
+- `GET /api/user/data` – Returns authenticated user profile details.
+
+## Outcome
+
+Once configured and running, this backend allows users to:
+
+- create an account and receive a welcome email,
+- log in securely using JWT stored in an HTTP-only cookie,
+- verify their account with an OTP email,
+- request a password reset OTP and update their password,
+- access a protected profile endpoint when authenticated.
+
+The `client/` folder is currently a placeholder for a future frontend integration.
 
 ## Notes
 
-- The `client/` directory currently serves as a placeholder for a future React frontend.
-- The backend uses cookies to store the JWT token and requires a valid `JWT_SECRET`.
-- Email delivery is configured through SMTP with `nodemailer`.
-
-## Contributing
-
-1. Fork the repository.
-2. Create a new branch: `git checkout -b feature/my-feature`
-3. Make your changes and commit them.
-4. Push to your branch and open a pull request.
+- Email functionality requires valid SMTP credentials.
+- JWT and MongoDB connection values must be set in the `.env` file.
+- The app is currently backend-first; frontend implementation is not included.
 
 ## License
 
-This project is licensed under the ISC License.
+ISC
