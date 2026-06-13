@@ -24,7 +24,7 @@ const Header = () => {
         tempor incididunt ut labore et dolore magna aliqua.
       </p>
 
-      <button className="border border-gray-500 rounded-full px-6 py-2 hover:bg-red-500 transition-all">
+      <button className="border border-gray-500 rounded-full px-6 py-2 hover:bg-gray-100 transition-all">
         Get Started
       </button>
     </div>
